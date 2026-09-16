@@ -1,0 +1,1977 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Property Ledger</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      background: #12171d;
+      color: #e7eaf0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 15px;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    /* =========================
+       LAYOUT
+    ========================= */
+
+    .container {
+      width: calc(100% - 48px);
+      max-width: 1475px;
+      margin: 0 auto;
+      padding: 30px 0 60px;
+    }
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 30px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #dca94d;
+      border-radius: 50%;
+      color: #e6ad52;
+      font-family: Georgia, serif;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .brand h1 {
+      margin: 0 0 3px;
+      color: #c8d9f1;
+      font-size: 29px;
+      line-height: 1.1;
+      font-weight: 700;
+    }
+
+    .brand p {
+      margin: 0;
+      color: #9eb1ca;
+      font-size: 16px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    /* =========================
+       BUTTONS
+    ========================= */
+
+    .btn {
+      height: 49px;
+      padding: 0 19px;
+      border-radius: 4px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .btn-outline {
+      color: #e6e9ee;
+      background: transparent;
+      border: 1px solid #33404f;
+    }
+
+    .btn-outline:hover {
+      background: #1b222b;
+    }
+
+    .btn-primary {
+      color: #10151b;
+      background: #cbd9eb;
+      border: 1px solid #cbd9eb;
+    }
+
+    .btn-primary:hover {
+      background: #d9e4f2;
+    }
+
+    /* =========================
+       DIVIDER
+    ========================= */
+
+    .divider {
+      height: 2px;
+      margin-top: 27px;
+      margin-bottom: 27px;
+      background: #bac7d7;
+      opacity: 0.9;
+    }
+
+    /* =========================
+       STATISTICS
+    ========================= */
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 15px;
+    }
+
+    .stat-card {
+      min-height: 97px;
+      padding: 17px 20px;
+      background: #1b222b;
+      border: 1px solid #34404e;
+      border-radius: 4px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-number {
+      margin-bottom: 5px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 32px;
+      line-height: 1;
+      font-weight: 700;
+    }
+
+    .stat-label {
+      color: #9eb1ca;
+      font-size: 14px;
+    }
+
+    .blue {
+      color: #b8d0f4;
+    }
+
+    .light-blue {
+      color: #c7d9f7;
+    }
+
+    .green {
+      color: #8ec89b;
+    }
+
+    .orange {
+      color: #e9b66a;
+    }
+
+    .red {
+      color: #ef8d87;
+    }
+
+    /* =========================
+       FILTERS
+    ========================= */
+
+    .filters {
+      display: grid;
+      grid-template-columns: minmax(300px, 1fr) 170px 170px;
+      gap: 13px;
+      margin-top: 27px;
+      margin-bottom: 18px;
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      height: 48px;
+      padding: 0 15px 0 42px;
+      color: #e7eaf0;
+      background: #1b222b;
+      border: 1px solid #34404e;
+      border-radius: 4px;
+      outline: none;
+    }
+
+    .search-box input::placeholder {
+      color: #7f8da0;
+    }
+
+    .search-box input:focus,
+    .filters select:focus,
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: #7187a3;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-53%);
+      color: #8b96a5;
+      font-size: 25px;
+      line-height: 1;
+      z-index: 1;
+    }
+
+    .filters select {
+      width: 100%;
+      height: 48px;
+      padding: 0 15px;
+      color: #e4e8ee;
+      background: #1b222b;
+      border: 1px solid #34404e;
+      border-radius: 4px;
+      outline: none;
+    }
+
+    /* =========================
+       TABLE
+    ========================= */
+
+    .table-wrapper {
+      overflow-x: auto;
+      background: #1b222b;
+      border: 1px solid #34404e;
+      border-radius: 4px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 1250px;
+      border-collapse: collapse;
+    }
+
+    th {
+      height: 49px;
+      padding: 0 18px;
+      color: #a9bdd8;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: left;
+      white-space: nowrap;
+      border-bottom: 1px solid #34404e;
+    }
+
+    td {
+      height: 64px;
+      padding: 10px 18px;
+      color: #f0f1f3;
+      font-size: 15px;
+      border-bottom: 1px solid #34404e;
+      white-space: nowrap;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: #202832;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .unit-name {
+      color: #91b7e4;
+      font-weight: 700;
+    }
+
+    /* =========================
+       BORROW / RETURN BADGES
+    ========================= */
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      padding: 0 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .borrow {
+      color: #e9b66b;
+      background: #392b16;
+    }
+
+    .returned {
+      color: #8fd09c;
+      background: #173326;
+    }
+
+    /* =========================
+       ACTIONS
+    ========================= */
+
+    .actions {
+      text-align: right;
+      padding-left: 8px;
+      padding-right: 20px;
+    }
+
+    .actions button {
+      padding: 0;
+      background: none;
+      border: none;
+      font-weight: 600;
+    }
+
+    .edit {
+      margin-right: 18px;
+      color: #a9bdd8;
+    }
+
+    .delete {
+      color: #ee8b82;
+    }
+
+    .edit:hover {
+      color: #d0def0;
+    }
+
+    .delete:hover {
+      color: #ffaaa2;
+    }
+
+    /* =========================
+       EMPTY MESSAGE
+    ========================= */
+
+    .empty-message {
+      text-align: center;
+      padding: 45px 20px;
+      color: #7f8da0;
+      display: none;
+    }
+
+    /* =========================
+       MODAL
+    ========================= */
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      width: 100%;
+      max-width: 700px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: #1b222b;
+      border: 1px solid #34404e;
+      border-radius: 6px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid #34404e;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      color: #c8d9f1;
+      font-size: 22px;
+    }
+
+    .close {
+      color: #9eb1ca;
+      background: none;
+      border: none;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .close:hover {
+      color: white;
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    /* =========================
+       FORM
+    ========================= */
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 17px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full {
+      grid-column: span 2;
+    }
+
+    .form-group label {
+      margin-bottom: 7px;
+      color: #a9bdd8;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      height: 44px;
+      padding: 0 12px;
+      color: #e7eaf0;
+      background: #12171d;
+      border: 1px solid #34404e;
+      border-radius: 4px;
+      outline: none;
+    }
+
+    .form-group select {
+      appearance: auto;
+    }
+
+    .conditional-field {
+      display: none;
+    }
+
+    .conditional-field.active {
+      display: flex;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 18px 24px;
+      border-top: 1px solid #34404e;
+    }
+
+    .cancel-btn {
+      height: 43px;
+      padding: 0 18px;
+      color: #e6e9ee;
+      background: transparent;
+      border: 1px solid #33404f;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    .save-btn {
+      height: 43px;
+      padding: 0 20px;
+      color: #10151b;
+      background: #cbd9eb;
+      border: 1px solid #cbd9eb;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    .cancel-btn:hover {
+      background: #252e38;
+    }
+
+    .save-btn:hover {
+      background: #d9e4f2;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 1000px) {
+
+      .container {
+        width: calc(100% - 32px);
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stats .stat-card:last-child {
+        grid-column: span 2;
+      }
+
+      .filters {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .search-box {
+        grid-column: span 2;
+      }
+    }
+
+    @media (max-width: 650px) {
+
+      .container {
+        width: calc(100% - 24px);
+        padding-top: 20px;
+      }
+
+      .header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .header-actions {
+        width: 100%;
+      }
+
+      .btn {
+        flex: 1;
+      }
+
+      .brand h1 {
+        font-size: 25px;
+      }
+
+      .brand p {
+        font-size: 14px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .stats .stat-card:last-child {
+        grid-column: auto;
+      }
+
+      .filters {
+        grid-template-columns: 1fr;
+      }
+
+      .search-box {
+        grid-column: auto;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-group.full {
+        grid-column: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="container">
+
+    <!-- HEADER -->
+    <header class="header">
+
+      <div class="brand">
+
+        <div class="logo">PN</div>
+
+        <div>
+          <h1>Property Ledger</h1>
+          <p>Track, borrow, return, and account for every item</p>
+        </div>
+
+      </div>
+
+      <div class="header-actions">
+
+        <button
+          class="btn btn-outline"
+          onclick="exportCSV()">
+          Export CSV
+        </button>
+
+        <button
+          class="btn btn-primary"
+          onclick="openAddModal()">
+          + Add item
+        </button>
+
+      </div>
+
+    </header>
+
+    <div class="divider"></div>
+
+
+    <!-- STATISTICS -->
+    <section class="stats">
+
+      <div class="stat-card">
+        <div class="stat-number blue" id="totalItems">0</div>
+        <div class="stat-label">Total items logged</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-number light-blue" id="totalQuantity">0</div>
+        <div class="stat-label">Total quantity</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-number green" id="returnedCount">0</div>
+        <div class="stat-label">Returned</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-number orange" id="borrowedCount">0</div>
+        <div class="stat-label">Borrowed</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-number red" id="officeCount">0</div>
+        <div class="stat-label">Office Locations</div>
+      </div>
+
+    </section>
+
+
+    <!-- SEARCH AND FILTERS -->
+    <section class="filters">
+
+      <div class="search-box">
+
+        <span class="search-icon">⌕</span>
+
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search by unit, borrower, receiver, or office..."
+          oninput="filterItems()">
+
+      </div>
+
+
+      <select
+        id="transactionFilter"
+        onchange="filterItems()">
+
+        <option value="All">Borrow & Return</option>
+        <option value="Borrow">Borrowed</option>
+        <option value="Return">Returned</option>
+
+      </select>
+
+
+      <select
+        id="locationFilter"
+        onchange="filterItems()">
+
+        <option value="All">All locations</option>
+        <option value="Main Office">Main Office</option>
+        <option value="Antique">Antique</option>
+        <option value="Calinog">Calinog</option>
+        <option value="Estancia">Estancia</option>
+        <option value="Bacolod">Bacolod</option>
+
+      </select>
+
+    </section>
+
+
+    <!-- TABLE -->
+    <section class="table-wrapper">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Unit</th>
+            <th>Date Purchased</th>
+            <th>QTY</th>
+            <th>Borrow / Return</th>
+            <th>Date Borrowed</th>
+            <th>Person Who Borrowed</th>
+            <th>Person Who Received</th>
+            <th>Date Received</th>
+            <th>Office Location</th>
+            <th></th>
+          </tr>
+
+        </thead>
+
+        <tbody id="propertyTable">
+        </tbody>
+
+      </table>
+
+      <div
+        class="empty-message"
+        id="emptyMessage">
+
+        No records found.
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================
+       ADD / EDIT MODAL
+  ========================== -->
+
+  <div
+    class="modal"
+    id="itemModal">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <h2 id="modalTitle">
+          Add Item
+        </h2>
+
+        <button
+          class="close"
+          onclick="closeModal()">
+          &times;
+        </button>
+
+      </div>
+
+
+      <div class="modal-body">
+
+        <form id="itemForm">
+
+          <div class="form-grid">
+
+            <!-- UNIT -->
+
+            <div class="form-group">
+
+              <label>
+                Unit
+              </label>
+
+              <input
+                type="text"
+                id="unit"
+                required
+                placeholder="Enter unit">
+
+            </div>
+
+
+            <!-- DATE PURCHASED -->
+
+            <div class="form-group">
+
+              <label>
+                Date Purchased Item
+              </label>
+
+              <input
+                type="date"
+                id="datePurchased"
+                required>
+
+            </div>
+
+
+            <!-- QTY -->
+
+            <div class="form-group">
+
+              <label>
+                QTY
+              </label>
+
+              <input
+                type="number"
+                id="quantity"
+                min="1"
+                required
+                placeholder="Enter quantity">
+
+            </div>
+
+
+            <!-- BORROW OR RETURN -->
+
+            <div class="form-group">
+
+              <label>
+                Borrow or Return
+              </label>
+
+              <select
+                id="transactionType"
+                required
+                onchange="toggleTransactionFields()">
+
+                <option value="">
+                  Select option
+                </option>
+
+                <option value="Borrow">
+                  Borrow
+                </option>
+
+                <option value="Return">
+                  Return
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <!-- DATE BORROWED -->
+
+            <div
+              class="form-group conditional-field"
+              id="borrowDateGroup">
+
+              <label>
+                Date Borrowed
+              </label>
+
+              <input
+                type="date"
+                id="dateBorrowed">
+
+            </div>
+
+
+            <!-- PERSON WHO BORROWED -->
+
+            <div
+              class="form-group conditional-field"
+              id="borrowerGroup">
+
+              <label>
+                Person Who Borrowed
+              </label>
+
+              <input
+                type="text"
+                id="personBorrowed"
+                placeholder="Enter person's name">
+
+            </div>
+
+
+            <!-- PERSON WHO RECEIVED -->
+
+            <div
+              class="form-group conditional-field"
+              id="receiverGroup">
+
+              <label>
+                Person Who Received
+              </label>
+
+              <input
+                type="text"
+                id="personReceived"
+                placeholder="Enter person's name">
+
+            </div>
+
+
+            <!-- DATE RECEIVED -->
+
+            <div
+              class="form-group conditional-field"
+              id="receivedDateGroup">
+
+              <label>
+                Date Received
+              </label>
+
+              <input
+                type="date"
+                id="dateReceived">
+
+            </div>
+
+
+            <!-- OFFICE LOCATION -->
+
+            <div class="form-group full">
+
+              <label>
+                Office Location
+              </label>
+
+              <select
+                id="officeLocation"
+                required>
+
+                <option value="">
+                  Select office location
+                </option>
+
+                <option value="Main Office">
+                  Main Office
+                </option>
+
+                <option value="Antique">
+                  Antique
+                </option>
+
+                <option value="Calinog">
+                  Calinog
+                </option>
+
+                <option value="Estancia">
+                  Estancia
+                </option>
+
+                <option value="Bacolod">
+                  Bacolod
+                </option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+        </form>
+
+      </div>
+
+
+      <div class="modal-footer">
+
+        <button
+          class="cancel-btn"
+          onclick="closeModal()">
+          Cancel
+        </button>
+
+        <button
+          class="save-btn"
+          onclick="saveItem()">
+          Save Item
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       JAVASCRIPT
+  ========================== -->
+
+  <script>
+
+    /*
+      PROPERTY DATA
+    */
+
+    let properties = JSON.parse(
+      localStorage.getItem("propertyLedger")
+    ) || [
+
+      {
+        id: 1,
+        unit: "Laptop",
+        datePurchased: "2025-01-15",
+        quantity: 2,
+        transactionType: "Borrow",
+        dateBorrowed: "2025-09-01",
+        personBorrowed: "M. Santos",
+        personReceived: "",
+        dateReceived: "",
+        officeLocation: "Main Office"
+      },
+
+      {
+        id: 2,
+        unit: "Projector",
+        datePurchased: "2024-11-03",
+        quantity: 1,
+        transactionType: "Return",
+        dateBorrowed: "",
+        personBorrowed: "",
+        personReceived: "R. Cruz",
+        dateReceived: "2025-09-05",
+        officeLocation: "Antique"
+      },
+
+      {
+        id: 3,
+        unit: "Office Chair",
+        datePurchased: "2023-06-20",
+        quantity: 5,
+        transactionType: "Return",
+        dateBorrowed: "",
+        personBorrowed: "",
+        personReceived: "A. Reyes",
+        dateReceived: "2025-08-20",
+        officeLocation: "Bacolod"
+      }
+
+    ];
+
+
+    let editingId = null;
+
+
+    /*
+      SAVE DATA
+    */
+
+    function saveToStorage() {
+
+      localStorage.setItem(
+        "propertyLedger",
+        JSON.stringify(properties)
+      );
+
+    }
+
+
+    /*
+      DISPLAY TABLE
+    */
+
+    function displayItems(items = properties) {
+
+      const table =
+        document.getElementById("propertyTable");
+
+      const emptyMessage =
+        document.getElementById("emptyMessage");
+
+      table.innerHTML = "";
+
+
+      if (items.length === 0) {
+
+        emptyMessage.style.display = "block";
+
+        return;
+
+      }
+
+
+      emptyMessage.style.display = "none";
+
+
+      items.forEach(function(item) {
+
+        let statusClass =
+          item.transactionType === "Borrow"
+          ? "borrow"
+          : "returned";
+
+
+        const row =
+          document.createElement("tr");
+
+
+        row.innerHTML = `
+
+          <td class="unit-name">
+            ${escapeHTML(item.unit)}
+          </td>
+
+          <td>
+            ${formatDate(item.datePurchased)}
+          </td>
+
+          <td class="center">
+            ${item.quantity}
+          </td>
+
+          <td>
+            <span class="status ${statusClass}">
+              ${escapeHTML(item.transactionType)}
+            </span>
+          </td>
+
+          <td>
+            ${
+              item.dateBorrowed
+              ? formatDate(item.dateBorrowed)
+              : "-"
+            }
+          </td>
+
+          <td>
+            ${
+              item.personBorrowed
+              ? escapeHTML(item.personBorrowed)
+              : "-"
+            }
+          </td>
+
+          <td>
+            ${
+              item.personReceived
+              ? escapeHTML(item.personReceived)
+              : "-"
+            }
+          </td>
+
+          <td>
+            ${
+              item.dateReceived
+              ? formatDate(item.dateReceived)
+              : "-"
+            }
+          </td>
+
+          <td>
+            ${escapeHTML(item.officeLocation)}
+          </td>
+
+          <td class="actions">
+
+            <button
+              class="edit"
+              onclick="editItem(${item.id})">
+              Edit
+            </button>
+
+            <button
+              class="delete"
+              onclick="deleteItem(${item.id})">
+              Delete
+            </button>
+
+          </td>
+
+        `;
+
+
+        table.appendChild(row);
+
+      });
+
+    }
+
+
+    /*
+      ESCAPE HTML
+    */
+
+    function escapeHTML(value) {
+
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    }
+
+
+    /*
+      FORMAT DATE
+    */
+
+    function formatDate(date) {
+
+      if (!date) {
+        return "";
+      }
+
+      const parts = date.split("-");
+
+      if (parts.length !== 3) {
+        return date;
+      }
+
+      const year = parts[0];
+      const month = parts[1];
+      const day = parts[2];
+
+      const months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec"
+      ];
+
+      return (
+        months[parseInt(month, 10) - 1]
+        + " "
+        + parseInt(day, 10)
+        + ", "
+        + year
+      );
+
+    }
+
+
+    /*
+      UPDATE STATISTICS
+    */
+
+    function updateStatistics() {
+
+      const totalItems =
+        properties.length;
+
+
+      const totalQuantity =
+        properties.reduce(
+          function(total, item) {
+
+            return total + Number(item.quantity);
+
+          },
+          0
+        );
+
+
+      const returned =
+        properties.filter(
+          function(item) {
+
+            return item.transactionType === "Return";
+
+          }
+        ).length;
+
+
+      const borrowed =
+        properties.filter(
+          function(item) {
+
+            return item.transactionType === "Borrow";
+
+          }
+        ).length;
+
+
+      const locations =
+        new Set(
+          properties.map(
+            function(item) {
+
+              return item.officeLocation;
+
+            }
+          )
+        ).size;
+
+
+      document.getElementById(
+        "totalItems"
+      ).textContent = totalItems;
+
+
+      document.getElementById(
+        "totalQuantity"
+      ).textContent = totalQuantity;
+
+
+      document.getElementById(
+        "returnedCount"
+      ).textContent = returned;
+
+
+      document.getElementById(
+        "borrowedCount"
+      ).textContent = borrowed;
+
+
+      document.getElementById(
+        "officeCount"
+      ).textContent = locations;
+
+    }
+
+
+    /*
+      SEARCH + FILTER
+    */
+
+    function filterItems() {
+
+      const search =
+        document.getElementById(
+          "searchInput"
+        ).value
+        .toLowerCase()
+        .trim();
+
+
+      const transaction =
+        document.getElementById(
+          "transactionFilter"
+        ).value;
+
+
+      const location =
+        document.getElementById(
+          "locationFilter"
+        ).value;
+
+
+      const filtered =
+        properties.filter(function(item) {
+
+          const searchMatch =
+
+            item.unit
+              .toLowerCase()
+              .includes(search)
+
+            ||
+
+            item.personBorrowed
+              .toLowerCase()
+              .includes(search)
+
+            ||
+
+            item.personReceived
+              .toLowerCase()
+              .includes(search)
+
+            ||
+
+            item.officeLocation
+              .toLowerCase()
+              .includes(search);
+
+
+          const transactionMatch =
+            transaction === "All"
+            ||
+            item.transactionType === transaction;
+
+
+          const locationMatch =
+            location === "All"
+            ||
+            item.officeLocation === location;
+
+
+          return (
+            searchMatch
+            &&
+            transactionMatch
+            &&
+            locationMatch
+          );
+
+        });
+
+
+      displayItems(filtered);
+
+    }
+
+
+    /*
+      SHOW BORROW / RETURN FIELDS
+    */
+
+    function toggleTransactionFields() {
+
+      const transaction =
+        document.getElementById(
+          "transactionType"
+        ).value;
+
+
+      const borrowDateGroup =
+        document.getElementById(
+          "borrowDateGroup"
+        );
+
+
+      const borrowerGroup =
+        document.getElementById(
+          "borrowerGroup"
+        );
+
+
+      const receiverGroup =
+        document.getElementById(
+          "receiverGroup"
+        );
+
+
+      const receivedDateGroup =
+        document.getElementById(
+          "receivedDateGroup"
+        );
+
+
+      /*
+        Hide everything first
+      */
+
+      borrowDateGroup.classList.remove("active");
+
+      borrowerGroup.classList.remove("active");
+
+      receiverGroup.classList.remove("active");
+
+      receivedDateGroup.classList.remove("active");
+
+
+      /*
+        BORROW
+      */
+
+      if (transaction === "Borrow") {
+
+        borrowDateGroup.classList.add("active");
+
+        borrowerGroup.classList.add("active");
+
+      }
+
+
+      /*
+        RETURN
+      */
+
+      if (transaction === "Return") {
+
+        receiverGroup.classList.add("active");
+
+        receivedDateGroup.classList.add("active");
+
+      }
+
+    }
+
+
+    /*
+      OPEN ADD MODAL
+    */
+
+    function openAddModal() {
+
+      editingId = null;
+
+      document.getElementById(
+        "modalTitle"
+      ).textContent = "Add Item";
+
+
+      document.getElementById(
+        "itemForm"
+      ).reset();
+
+
+      toggleTransactionFields();
+
+
+      document.getElementById(
+        "itemModal"
+      ).classList.add("active");
+
+    }
+
+
+    /*
+      CLOSE MODAL
+    */
+
+    function closeModal() {
+
+      document.getElementById(
+        "itemModal"
+      ).classList.remove("active");
+
+      editingId = null;
+
+    }
+
+
+    /*
+      SAVE ITEM
+    */
+
+    function saveItem() {
+
+      const form =
+        document.getElementById("itemForm");
+
+
+      if (!form.checkValidity()) {
+
+        form.reportValidity();
+
+        return;
+
+      }
+
+
+      const transaction =
+        document.getElementById(
+          "transactionType"
+        ).value;
+
+
+      const itemData = {
+
+        unit:
+          document.getElementById(
+            "unit"
+          ).value.trim(),
+
+        datePurchased:
+          document.getElementById(
+            "datePurchased"
+          ).value,
+
+        quantity:
+          Number(
+            document.getElementById(
+              "quantity"
+            ).value
+          ),
+
+        transactionType:
+          transaction,
+
+        dateBorrowed:
+          transaction === "Borrow"
+          ?
+          document.getElementById(
+            "dateBorrowed"
+          ).value
+          :
+          "",
+
+        personBorrowed:
+          transaction === "Borrow"
+          ?
+          document.getElementById(
+            "personBorrowed"
+          ).value.trim()
+          :
+          "",
+
+        personReceived:
+          transaction === "Return"
+          ?
+          document.getElementById(
+            "personReceived"
+          ).value.trim()
+          :
+          "",
+
+        dateReceived:
+          transaction === "Return"
+          ?
+          document.getElementById(
+            "dateReceived"
+          ).value
+          :
+          "",
+
+        officeLocation:
+          document.getElementById(
+            "officeLocation"
+          ).value
+
+      };
+
+
+      /*
+        EDIT
+      */
+
+      if (editingId !== null) {
+
+        const index =
+          properties.findIndex(
+            function(item) {
+
+              return item.id === editingId;
+
+            }
+          );
+
+
+        if (index !== -1) {
+
+          properties[index] = {
+
+            id: editingId,
+
+            ...itemData
+
+          };
+
+        }
+
+      }
+
+
+      /*
+        ADD
+      */
+
+      else {
+
+        properties.push({
+
+          id: Date.now(),
+
+          ...itemData
+
+        });
+
+      }
+
+
+      saveToStorage();
+
+      updateStatistics();
+
+      filterItems();
+
+      closeModal();
+
+    }
+
+
+    /*
+      EDIT ITEM
+    */
+
+    function editItem(id) {
+
+      const item =
+        properties.find(
+          function(property) {
+
+            return property.id === id;
+
+          }
+        );
+
+
+      if (!item) {
+        return;
+      }
+
+
+      editingId = id;
+
+
+      document.getElementById(
+        "modalTitle"
+      ).textContent = "Edit Item";
+
+
+      document.getElementById(
+        "unit"
+      ).value = item.unit;
+
+
+      document.getElementById(
+        "datePurchased"
+      ).value = item.datePurchased;
+
+
+      document.getElementById(
+        "quantity"
+      ).value = item.quantity;
+
+
+      document.getElementById(
+        "transactionType"
+      ).value = item.transactionType;
+
+
+      document.getElementById(
+        "dateBorrowed"
+      ).value = item.dateBorrowed;
+
+
+      document.getElementById(
+        "personBorrowed"
+      ).value = item.personBorrowed;
+
+
+      document.getElementById(
+        "personReceived"
+      ).value = item.personReceived;
+
+
+      document.getElementById(
+        "dateReceived"
+      ).value = item.dateReceived;
+
+
+      document.getElementById(
+        "officeLocation"
+      ).value = item.officeLocation;
+
+
+      toggleTransactionFields();
+
+
+      document.getElementById(
+        "itemModal"
+      ).classList.add("active");
+
+    }
+
+
+    /*
+      DELETE ITEM
+    */
+
+    function deleteItem(id) {
+
+      const item =
+        properties.find(
+          function(property) {
+
+            return property.id === id;
+
+          }
+        );
+
+
+      if (!item) {
+        return;
+      }
+
+
+      const confirmed =
+        confirm(
+          "Are you sure you want to delete " +
+          item.unit +
+          "?"
+        );
+
+
+      if (!confirmed) {
+        return;
+      }
+
+
+      properties =
+        properties.filter(
+          function(property) {
+
+            return property.id !== id;
+
+          }
+        );
+
+
+      saveToStorage();
+
+      updateStatistics();
+
+      filterItems();
+
+    }
+
+
+    /*
+      EXPORT CSV
+    */
+
+    function exportCSV() {
+
+      if (properties.length === 0) {
+
+        alert(
+          "There are no records to export."
+        );
+
+        return;
+
+      }
+
+
+      const headers = [
+
+        "Unit",
+        "Date Purchased Item",
+        "QTY",
+        "Borrow or Return",
+        "Date Borrowed",
+        "Person Who Borrowed",
+        "Person Who Received",
+        "Date Received",
+        "Office Location"
+
+      ];
+
+
+      const rows =
+        properties.map(function(item) {
+
+          return [
+
+            item.unit,
+            item.datePurchased,
+            item.quantity,
+            item.transactionType,
+            item.dateBorrowed,
+            item.personBorrowed,
+            item.personReceived,
+            item.dateReceived,
+            item.officeLocation
+
+          ];
+
+        });
+
+
+      const csvData = [
+        headers,
+        ...rows
+      ];
+
+
+      const csv =
+        csvData.map(function(row) {
+
+          return row.map(function(value) {
+
+            return '"' +
+              String(value)
+                .replace(/"/g, '""')
+              +
+              '"';
+
+          }).join(",");
+
+        }).join("\n");
+
+
+      const blob =
+        new Blob(
+          [csv],
+          {
+            type: "text/csv;charset=utf-8;"
+          }
+        );
+
+
+      const url =
+        URL.createObjectURL(blob);
+
+
+      const link =
+        document.createElement("a");
+
+
+      link.href = url;
+
+      link.download =
+        "property-ledger.csv";
+
+
+      document.body.appendChild(link);
+
+      link.click();
+
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(url);
+
+    }
+
+
+    /*
+      CLOSE MODAL BY CLICKING OUTSIDE
+    */
+
+    document.getElementById(
+      "itemModal"
+    ).addEventListener(
+      "click",
+      function(event) {
+
+        if (event.target === this) {
+
+          closeModal();
+
+        }
+
+      }
+    );
+
+
+    /*
+      INITIAL LOAD
+    */
+
+    updateStatistics();
+
+    displayItems();
+
+  </script>
+
+</body>
+</html>
+```
