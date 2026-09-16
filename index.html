@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Property Ledger</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #12171d;
+    color: #fff;
+    padding: 25px;
+}
+
+.container {
+    max-width: 1400px;
+    margin: auto;
+}
+
+/* HEADER */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    gap: 20px;
+}
+
+.logo-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo {
+    width: 55px;
+    height: 55px;
+    background: #2f80ed;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+header h1 {
+    font-size: 27px;
+}
+
+header p {
+    color: #9ba5b1;
+    margin-top: 5px;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+button {
+    border: none;
+    cursor: pointer;
+    border-radius: 7px;
+    padding: 11px 17px;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background: #2f80ed;
+    color: white;
+}
+
+.btn-secondary {
+    background: #29313a;
+    color: white;
+}
+
+.btn-danger {
+    background: #d64545;
+    color: white;
+}
+
+/* STATS */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: #1b222a;
+    padding: 18px;
+    border-radius: 10px;
+    border: 1px solid #29313a;
+}
+
+.stat-card p {
+    color: #9ba5b1;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.stat-card h2 {
+    font-size: 25px;
+}
+
+/* CONTROLS */
+.controls {
+    background: #1b222a;
+    padding: 18px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #29313a;
+}
+
+.search-box {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.search-box input,
+select,
+input {
+    width: 100%;
+    padding: 11px;
+    background: #11161c;
+    border: 1px solid #39434e;
+    color: white;
+    border-radius: 6px;
+    outline: none;
+}
+
+.filters {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+/* TABLE */
+.table-container {
+    overflow-x: auto;
+    background: #1b222a;
+    border-radius: 10px;
+    border: 1px solid #29313a;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1200px;
+}
+
+th,
+td {
+    padding: 14px;
+    text-align: left;
+    border-bottom: 1px solid #29313a;
+    white-space: nowrap;
+}
+
+th {
+    background: #202933;
+    color: #cfd6dd;
+}
+
+td {
+    color: #e5e9ed;
+}
+
+.actions {
+    display: flex;
+    gap: 6px;
+}
+
+.actions button {
+    padding: 7px 10px;
+    font-size: 12px;
+}
+
+/* STATUS */
+.returned {
+    color: #4caf50;
+    font-weight: bold;
+}
+
+.borrowed {
+    color: #ffb020;
+    font-weight: bold;
+}
+
+/* MODAL */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.75);
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    z-index: 999;
+}
+
+.modal-content {
+    background: #1b222a;
+    width: 100%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 12px;
+    padding: 25px;
+    border: 1px solid #39434e;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-header h2 {
+    font-size: 22px;
+}
+
+.close {
+    background: transparent;
+    color: white;
+    font-size: 25px;
+    padding: 0;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 7px;
+    color: #cfd6dd;
+    font-size: 14px;
+}
+
+.full-width {
+    grid-column: span 2;
+}
+
+.return-section {
+    margin-top: 10px;
+    padding-top: 20px;
+    border-top: 1px solid #39434e;
+}
+
+.return-section h3 {
+    margin-bottom: 15px;
+    color: #2f80ed;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* EMPTY */
+.empty {
+    text-align: center;
+    padding: 40px;
+    color: #8f9aa6;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1000px) {
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 650px) {
+    body {
+        padding: 15px;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .filters,
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .full-width {
+        grid-column: span 1;
+    }
+
+    .header-buttons {
+        width: 100%;
+    }
+
+    .header-buttons button {
+        flex: 1;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo-title">
+            <div class="logo">PN</div>
+
+            <div>
+                <h1>Property Ledger</h1>
+                <p>Track borrowed and returned property records</p>
+            </div>
+        </div>
+
+        <div class="header-buttons">
+            <button class="btn-secondary" onclick="exportCSV()">
+                Export CSV
+            </button>
+
+            <button class="btn-primary" onclick="openAddModal()">
+                + Add Record
+            </button>
+        </div>
+    </header>
+
+    <!-- STATS -->
+    <div class="stats">
+
+        <div class="stat-card">
+            <p>Total Records</p>
+            <h2 id="totalRecords">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <p>Total Quantity</p>
+            <h2 id="totalQuantity">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <p>Currently Borrowed</p>
+            <h2 id="borrowedCount">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <p>Returned</p>
+            <h2 id="returnedCount">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <p>Office Locations</p>
+            <h2 id="locationCount">0</h2>
+        </div>
+
+    </div>
+
+    <!-- SEARCH AND FILTER -->
+    <div class="controls">
+
+        <div class="search-box">
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search unit, person, or office location..."
+                oninput="displayRecords()"
+            >
+        </div>
+
+        <div class="filters">
+
+            <select id="statusFilter" onchange="displayRecords()">
+                <option value="all">All Records</option>
+                <option value="borrowed">Currently Borrowed</option>
+                <option value="returned">Returned</option>
+            </select>
+
+            <select id="locationFilter" onchange="displayRecords()">
+                <option value="all">All Office Locations</option>
+                <option value="Main Office">Main Office</option>
+                <option value="Antique">Antique</option>
+                <option value="Calinog">Calinog</option>
+                <option value="Estancia">Estancia</option>
+                <option value="Bacolod">Bacolod</option>
+            </select>
+
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-container">
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Unit</th>
+                    <th>Date Purchased</th>
+                    <th>QTY</th>
+                    <th>Date Borrowed</th>
+                    <th>Person Who Borrowed</th>
+                    <th>Office Location</th>
+                    <th>Return Status</th>
+                    <th>Person Who Received</th>
+                    <th>Date Received</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody id="recordTable"></tbody>
+        </table>
+
+    </div>
+
+</div>
+
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal" id="recordModal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2 id="modalTitle">Add Record</h2>
+
+            <button class="close" onclick="closeModal()">
+                &times;
+            </button>
+
+        </div>
+
+        <div class="form-grid">
+
+            <!-- UNIT -->
+            <div class="form-group">
+                <label>Unit</label>
+
+                <input
+                    type="text"
+                    id="unit"
+                    placeholder="Enter unit"
+                >
+            </div>
+
+            <!-- DATE PURCHASED -->
+            <div class="form-group">
+                <label>Date Purchased</label>
+
+                <input
+                    type="date"
+                    id="datePurchased"
+                >
+            </div>
+
+            <!-- QTY -->
+            <div class="form-group">
+                <label>QTY</label>
+
+                <input
+                    type="number"
+                    id="quantity"
+                    min="1"
+                    placeholder="Enter quantity"
+                >
+            </div>
+
+            <!-- DATE BORROWED -->
+            <div class="form-group">
+                <label>Date Borrowed</label>
+
+                <input
+                    type="date"
+                    id="dateBorrowed"
+                >
+            </div>
+
+            <!-- PERSON WHO BORROWED -->
+            <div class="form-group">
+                <label>Person Who Borrowed</label>
+
+                <input
+                    type="text"
+                    id="personBorrowed"
+                    placeholder="Enter name"
+                >
+            </div>
+
+            <!-- OFFICE LOCATION -->
+            <div class="form-group">
+                <label>Office Location</label>
+
+                <select id="officeLocation">
+
+                    <option value="">
+                        Select Office Location
+                    </option>
+
+                    <option value="Main Office">
+                        Main Office
+                    </option>
+
+                    <option value="Antique">
+                        Antique
+                    </option>
+
+                    <option value="Calinog">
+                        Calinog
+                    </option>
+
+                    <option value="Estancia">
+                        Estancia
+                    </option>
+
+                    <option value="Bacolod">
+                        Bacolod
+                    </option>
+
+                </select>
+            </div>
+
+        </div>
+
+        <!-- RETURN SECTION -->
+        <div
+            class="return-section"
+            id="returnSection"
+            style="display:none;"
+        >
+
+            <h3>Return Information</h3>
+
+            <div class="form-grid">
+
+                <!-- PERSON WHO RECEIVED -->
+                <div class="form-group">
+
+                    <label>Person Who Received</label>
+
+                    <input
+                        type="text"
+                        id="personReceived"
+                        placeholder="Enter name"
+                    >
+
+                </div>
+
+                <!-- DATE RECEIVED -->
+                <div class="form-group">
+
+                    <label>Date Received</label>
+
+                    <input
+                        type="date"
+                        id="dateReceived"
+                    >
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="modal-buttons">
+
+            <button
+                class="btn-secondary"
+                onclick="closeModal()"
+            >
+                Cancel
+            </button>
+
+            <button
+                class="btn-primary"
+                onclick="saveRecord()"
+            >
+                Save
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* ================================
+   DATA
+================================ */
+
+let records = JSON.parse(
+    localStorage.getItem("propertyLedgerBorrowing")
+) || [];
+
+let editingId = null;
+
+
+/* ================================
+   DISPLAY RECORDS
+================================ */
+
+function displayRecords() {
+
+    const table = document.getElementById("recordTable");
+
+    const search =
+        document.getElementById("searchInput")
+        .value
+        .toLowerCase();
+
+    const statusFilter =
+        document.getElementById("statusFilter").value;
+
+    const locationFilter =
+        document.getElementById("locationFilter").value;
+
+    table.innerHTML = "";
+
+    const filtered = records.filter(record => {
+
+        const searchMatch =
+            String(record.unit).toLowerCase().includes(search) ||
+            String(record.personBorrowed).toLowerCase().includes(search) ||
+            String(record.personReceived).toLowerCase().includes(search) ||
+            String(record.officeLocation).toLowerCase().includes(search);
+
+        const status =
+            record.dateReceived ? "returned" : "borrowed";
+
+        const statusMatch =
+            statusFilter === "all" ||
+            statusFilter === status;
+
+        const locationMatch =
+            locationFilter === "all" ||
+            record.officeLocation === locationFilter;
+
+        return searchMatch &&
+               statusMatch &&
+               locationMatch;
+
+    });
+
+    if (filtered.length === 0) {
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="10" class="empty">
+                    No records found.
+                </td>
+            </tr>
+        `;
+
+        updateStatistics();
+        return;
+    }
+
+
+    filtered.forEach(record => {
+
+        const status =
+            record.dateReceived
+            ? `<span class="returned">Returned</span>`
+            : `<span class="borrowed">Borrowed</span>`;
+
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+
+            <td>${escapeHTML(record.unit)}</td>
+
+            <td>${formatDate(record.datePurchased)}</td>
+
+            <td>${record.quantity}</td>
+
+            <td>${formatDate(record.dateBorrowed)}</td>
+
+            <td>${escapeHTML(record.personBorrowed)}</td>
+
+            <td>${escapeHTML(record.officeLocation)}</td>
+
+            <td>${status}</td>
+
+            <td>
+                ${record.personReceived
+                    ? escapeHTML(record.personReceived)
+                    : "-"}
+            </td>
+
+            <td>
+                ${record.dateReceived
+                    ? formatDate(record.dateReceived)
+                    : "-"}
+            </td>
+
+            <td>
+
+                <div class="actions">
+
+                    <button
+                        class="btn-primary"
+                        onclick="editRecord(${record.id})"
+                    >
+                        Edit
+                    </button>
+
+                    <button
+                        class="btn-danger"
+                        onclick="deleteRecord(${record.id})"
+                    >
+                        Delete
+                    </button>
+
+                </div>
+
+            </td>
+
+        `;
+
+        table.appendChild(row);
+
+    });
+
+    updateStatistics();
+}
+
+
+/* ================================
+   STATISTICS
+================================ */
+
+function updateStatistics() {
+
+    const totalRecords = records.length;
+
+    const totalQuantity = records.reduce(
+        (sum, record) =>
+            sum + Number(record.quantity || 0),
+        0
+    );
+
+    const borrowed =
+        records.filter(
+            record => !record.dateReceived
+        ).length;
+
+    const returned =
+        records.filter(
+            record => record.dateReceived
+        ).length;
+
+    const locations =
+        new Set(
+            records.map(
+                record => record.officeLocation
+            )
+        );
+
+    document.getElementById("totalRecords")
+        .textContent = totalRecords;
+
+    document.getElementById("totalQuantity")
+        .textContent = totalQuantity;
+
+    document.getElementById("borrowedCount")
+        .textContent = borrowed;
+
+    document.getElementById("returnedCount")
+        .textContent = returned;
+
+    document.getElementById("locationCount")
+        .textContent = locations.size;
+}
+
+
+/* ================================
+   OPEN ADD MODAL
+================================ */
+
+function openAddModal() {
+
+    editingId = null;
+
+    document.getElementById("modalTitle")
+        .textContent = "Add Record";
+
+    document.getElementById("returnSection")
+        .style.display = "none";
+
+    clearForm();
+
+    document.getElementById("recordModal")
+        .style.display = "flex";
+}
+
+
+/* ================================
+   EDIT RECORD
+================================ */
+
+function editRecord(id) {
+
+    const record = records.find(
+        r => r.id === id
+    );
+
+    if (!record) return;
+
+    editingId = id;
+
+    document.getElementById("modalTitle")
+        .textContent = "Edit Record";
+
+    document.getElementById("unit").value =
+        record.unit;
+
+    document.getElementById("datePurchased").value =
+        record.datePurchased;
+
+    document.getElementById("quantity").value =
+        record.quantity;
+
+    document.getElementById("dateBorrowed").value =
+        record.dateBorrowed;
+
+    document.getElementById("personBorrowed").value =
+        record.personBorrowed;
+
+    document.getElementById("officeLocation").value =
+        record.officeLocation;
+
+    /*
+       Return fields only appear
+       when editing.
+    */
+
+    document.getElementById("returnSection")
+        .style.display = "block";
+
+    document.getElementById("personReceived").value =
+        record.personReceived || "";
+
+    document.getElementById("dateReceived").value =
+        record.dateReceived || "";
+
+    document.getElementById("recordModal")
+        .style.display = "flex";
+}
+
+
+/* ================================
+   SAVE RECORD
+================================ */
+
+function saveRecord() {
+
+    const unit =
+        document.getElementById("unit").value.trim();
+
+    const datePurchased =
+        document.getElementById("datePurchased").value;
+
+    const quantity =
+        document.getElementById("quantity").value;
+
+    const dateBorrowed =
+        document.getElementById("dateBorrowed").value;
+
+    const personBorrowed =
+        document.getElementById("personBorrowed")
+        .value
+        .trim();
+
+    const officeLocation =
+        document.getElementById("officeLocation").value;
+
+    const personReceived =
+        document.getElementById("personReceived")
+        .value
+        .trim();
+
+    const dateReceived =
+        document.getElementById("dateReceived").value;
+
+
+    /* VALIDATION */
+
+    if (
+        !unit ||
+        !datePurchased ||
+        !quantity ||
+        !dateBorrowed ||
+        !personBorrowed ||
+        !officeLocation
+    ) {
+
+        alert("Please fill in all required fields.");
+
+        return;
+    }
+
+
+    /* EDIT */
+
+    if (editingId !== null) {
+
+        const index = records.findIndex(
+            record => record.id === editingId
+        );
+
+        if (index !== -1) {
+
+            records[index] = {
+
+                ...records[index],
+
+                unit,
+                datePurchased,
+                quantity: Number(quantity),
+                dateBorrowed,
+                personBorrowed,
+                officeLocation,
+
+                personReceived,
+                dateReceived
+
+            };
+
+        }
+
+    }
+
+    /* ADD */
+
+    else {
+
+        const newRecord = {
+
+            id: Date.now(),
+
+            unit,
+            datePurchased,
+
+            quantity: Number(quantity),
+
+            dateBorrowed,
+
+            personBorrowed,
+
+            officeLocation,
+
+            personReceived: "",
+
+            dateReceived: ""
+
+        };
+
+        records.push(newRecord);
+
+    }
+
+
+    saveToStorage();
+
+    closeModal();
+
+    displayRecords();
+}
+
+
+/* ================================
+   DELETE
+================================ */
+
+function deleteRecord(id) {
+
+    const record = records.find(
+        r => r.id === id
+    );
+
+    if (!record) return;
+
+    const confirmDelete = confirm(
+        "Are you sure you want to delete this record?"
+    );
+
+    if (!confirmDelete) return;
+
+    records = records.filter(
+        record => record.id !== id
+    );
+
+    saveToStorage();
+
+    displayRecords();
+}
+
+
+/* ================================
+   CLEAR FORM
+================================ */
+
+function clearForm() {
+
+    document.getElementById("unit").value = "";
+
+    document.getElementById("datePurchased").value = "";
+
+    document.getElementById("quantity").value = "";
+
+    document.getElementById("dateBorrowed").value = "";
+
+    document.getElementById("personBorrowed").value = "";
+
+    document.getElementById("officeLocation").value = "";
+
+    document.getElementById("personReceived").value = "";
+
+    document.getElementById("dateReceived").value = "";
+}
+
+
+/* ================================
+   CLOSE MODAL
+================================ */
+
+function closeModal() {
+
+    document.getElementById("recordModal")
+        .style.display = "none";
+
+    editingId = null;
+}
+
+
+/* ================================
+   LOCAL STORAGE
+================================ */
+
+function saveToStorage() {
+
+    localStorage.setItem(
+        "propertyLedgerBorrowing",
+        JSON.stringify(records)
+    );
+}
+
+
+/* ================================
+   DATE FORMAT
+================================ */
+
+function formatDate(date) {
+
+    if (!date) return "-";
+
+    const parts = date.split("-");
+
+    if (parts.length !== 3) {
+        return date;
+    }
+
+    return `${parts[1]}/${parts[2]}/${parts[0]}`;
+}
+
+
+/* ================================
+   ESCAPE HTML
+================================ */
+
+function escapeHTML(value) {
+
+    if (value === undefined || value === null) {
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/* ================================
+   EXPORT CSV
+================================ */
+
+function exportCSV() {
+
+    if (records.length === 0) {
+
+        alert("There are no records to export.");
+
+        return;
+    }
+
+
+    const headers = [
+
+        "Unit",
+        "Date Purchased",
+        "QTY",
+        "Date Borrowed",
+        "Person Who Borrowed",
+        "Office Location",
+        "Return Status",
+        "Person Who Received",
+        "Date Received"
+
+    ];
+
+
+    const rows = records.map(record => [
+
+        record.unit,
+
+        record.datePurchased,
+
+        record.quantity,
+
+        record.dateBorrowed,
+
+        record.personBorrowed,
+
+        record.officeLocation,
+
+        record.dateReceived
+            ? "Returned"
+            : "Borrowed",
+
+        record.personReceived,
+
+        record.dateReceived
+
+    ]);
+
+
+    const csv = [
+
+        headers,
+
+        ...rows
+
+    ]
+    .map(row =>
+        row.map(value =>
+            `"${String(value || "")
+                .replace(/"/g, '""')}"`
+        ).join(",")
+    )
+    .join("\n");
+
+
+    const blob = new Blob(
+        [csv],
+        { type: "text/csv;charset=utf-8;" }
+    );
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const link =
+        document.createElement("a");
+
+    link.href = url;
+
+    link.download =
+        "property_ledger.csv";
+
+    link.click();
+
+    URL.revokeObjectURL(url);
+}
+
+
+/* ================================
+   CLOSE MODAL WHEN CLICKING OUTSIDE
+================================ */
+
+window.onclick = function(event) {
+
+    const modal =
+        document.getElementById("recordModal");
+
+    if (event.target === modal) {
+        closeModal();
+    }
+
+};
+
+
+/* ================================
+   INITIAL LOAD
+================================ */
+
+displayRecords();
+
+</script>
+
+</body>
+</html>
