@@ -1,0 +1,741 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Property Ledger</title>
+
+  <style>
+    /* =========================
+       Base
+    ========================= */
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      background: #12171d;
+      color: #e7eaf0;
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      font-size: 15px;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    /* =========================
+       Layout
+    ========================= */
+
+    .container {
+      width: calc(100% - 48px);
+      max-width: 1475px;
+      margin: 0 auto;
+      padding: 30px 0 60px;
+    }
+
+    /* =========================
+       Header
+    ========================= */
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 30px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border: 2px solid #dca94d;
+      border-radius: 50%;
+
+      color: #e6ad52;
+      font-family: Georgia, serif;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .brand h1 {
+      margin: 0 0 3px;
+
+      color: #c8d9f1;
+      font-size: 29px;
+      line-height: 1.1;
+      font-weight: 700;
+      letter-spacing: -0.6px;
+    }
+
+    .brand p {
+      margin: 0;
+
+      color: #9eb1ca;
+      font-size: 16px;
+      letter-spacing: 0.05px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      height: 49px;
+      padding: 0 19px;
+
+      border-radius: 4px;
+
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .btn-outline {
+      color: #e6e9ee;
+      background: transparent;
+      border: 1px solid #33404f;
+    }
+
+    .btn-outline:hover {
+      background: #1b222b;
+    }
+
+    .btn-primary {
+      color: #10151b;
+      background: #cbd9eb;
+      border: 1px solid #cbd9eb;
+    }
+
+    .btn-primary:hover {
+      background: #d9e4f2;
+    }
+
+    /* =========================
+       Divider
+    ========================= */
+
+    .divider {
+      height: 2px;
+      margin-top: 27px;
+      margin-bottom: 27px;
+
+      background: #bac7d7;
+      opacity: 0.9;
+    }
+
+    /* =========================
+       Statistics
+    ========================= */
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 15px;
+    }
+
+    .stat-card {
+      min-height: 97px;
+      padding: 17px 20px;
+
+      background: #1b222b;
+      border: 1px solid #34404e;
+      border-radius: 4px;
+
+      box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-number {
+      margin-bottom: 5px;
+
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 32px;
+      line-height: 1;
+      font-weight: 700;
+    }
+
+    .stat-label {
+      color: #9eb1ca;
+      font-size: 14px;
+    }
+
+    .blue {
+      color: #b8d0f4;
+    }
+
+    .light-blue {
+      color: #c7d9f7;
+    }
+
+    .green {
+      color: #8ec89b;
+    }
+
+    .orange {
+      color: #e9b66a;
+    }
+
+    .red {
+      color: #ef8d87;
+    }
+
+    /* =========================
+       Filters
+    ========================= */
+
+    .filters {
+      display: grid;
+      grid-template-columns: minmax(300px, 1fr) 161px 164px;
+      gap: 13px;
+
+      margin-top: 27px;
+      margin-bottom: 18px;
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      height: 48px;
+
+      padding: 0 15px 0 42px;
+
+      color: #e7eaf0;
+      background: #1b222b;
+
+      border: 1px solid #34404e;
+      border-radius: 4px;
+
+      outline: none;
+    }
+
+    .search-box input::placeholder {
+      color: #7f8da0;
+    }
+
+    .search-box input:focus,
+    .filters select:focus {
+      border-color: #7187a3;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+
+      transform: translateY(-53%);
+
+      color: #8b96a5;
+      font-size: 25px;
+      line-height: 1;
+      z-index: 1;
+    }
+
+    .filters select {
+      width: 100%;
+      height: 48px;
+
+      padding: 0 15px;
+
+      color: #e4e8ee;
+      background: #1b222b;
+
+      border: 1px solid #34404e;
+      border-radius: 4px;
+
+      outline: none;
+
+      appearance: auto;
+    }
+
+    /* =========================
+       Table
+    ========================= */
+
+    .table-wrapper {
+      overflow-x: auto;
+
+      background: #1b222b;
+      border: 1px solid #34404e;
+      border-radius: 4px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 1100px;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: #1b222b;
+    }
+
+    th {
+      height: 49px;
+      padding: 0 18px;
+
+      color: #a9bdd8;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: left;
+      white-space: nowrap;
+
+      border-bottom: 1px solid #34404e;
+    }
+
+    td {
+      height: 64px;
+      padding: 10px 18px;
+
+      color: #f0f1f3;
+      font-size: 15px;
+
+      border-bottom: 1px solid #34404e;
+      white-space: nowrap;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: #202832;
+    }
+
+    /* =========================
+       Table columns
+    ========================= */
+
+    .property-no {
+      color: #91b7e4;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 15px;
+      letter-spacing: 0.3px;
+    }
+
+    .description {
+      color: #f2f0ed;
+      font-weight: 700;
+    }
+
+    .sub-description {
+      margin-top: 4px;
+
+      color: #9aabc0;
+      font-size: 14px;
+      font-weight: 400;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    /* =========================
+       Status badges
+    ========================= */
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+
+      min-height: 27px;
+      padding: 0 12px;
+
+      border-radius: 999px;
+
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .serviceable {
+      color: #8fd09c;
+      background: #173326;
+    }
+
+    .repair {
+      color: #e9b66b;
+      background: #392b16;
+    }
+
+    .unserviceable {
+      color: #ee8d84;
+      background: #3a1e1e;
+    }
+
+    /* =========================
+       Actions
+    ========================= */
+
+    .actions {
+      text-align: right;
+      padding-left: 8px;
+      padding-right: 20px;
+    }
+
+    .actions button {
+      padding: 0;
+      background: none;
+      border: none;
+
+      font-weight: 600;
+    }
+
+    .edit {
+      margin-right: 18px;
+      color: #a9bdd8;
+    }
+
+    .delete {
+      color: #ee8b82;
+    }
+
+    .edit:hover {
+      color: #d0def0;
+    }
+
+    .delete:hover {
+      color: #ffaaa2;
+    }
+
+    /* =========================
+       Responsive
+    ========================= */
+
+    @media (max-width: 1000px) {
+      .container {
+        width: calc(100% - 32px);
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stats .stat-card:last-child {
+        grid-column: span 2;
+      }
+
+      .filters {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .search-box {
+        grid-column: span 2;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .container {
+        width: calc(100% - 24px);
+        padding-top: 20px;
+      }
+
+      .header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .header-actions {
+        width: 100%;
+      }
+
+      .btn {
+        flex: 1;
+      }
+
+      .brand h1 {
+        font-size: 25px;
+      }
+
+      .brand p {
+        font-size: 14px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .stats .stat-card:last-child {
+        grid-column: auto;
+      }
+
+      .filters {
+        grid-template-columns: 1fr;
+      }
+
+      .search-box {
+        grid-column: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="container">
+
+    <!-- Header -->
+    <header class="header">
+
+      <div class="brand">
+
+        <div class="logo">PN</div>
+
+        <div>
+          <h1>Property Ledger</h1>
+          <p>Custodian inventory — track, tag, and account for every item</p>
+        </div>
+
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-outline">Export CSV</button>
+        <button class="btn btn-primary">+ Add item</button>
+      </div>
+
+    </header>
+
+    <div class="divider"></div>
+
+
+    <!-- Statistics -->
+    <section class="stats">
+
+      <div class="stat-card">
+        <div class="stat-number blue">3</div>
+        <div class="stat-label">Total items logged</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-number light-blue">10</div>
+        <div class="stat-label">Total quantity on hand</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-number green">1</div>
+        <div class="stat-label">Serviceable</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-number orange">1</div>
+        <div class="stat-label">For repair</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-number red">1</div>
+        <div class="stat-label">Unserviceable</div>
+      </div>
+
+    </section>
+
+
+    <!-- Search / Filters -->
+    <section class="filters">
+
+      <div class="search-box">
+
+        <span class="search-icon">⌕</span>
+
+        <input
+          type="text"
+          placeholder="Search by property no., description, or custodian..."
+        />
+
+      </div>
+
+      <select>
+        <option>All statuses</option>
+        <option>Serviceable</option>
+        <option>For Repair</option>
+        <option>Unserviceable</option>
+      </select>
+
+      <select>
+        <option>All locations</option>
+        <option>Records Office</option>
+        <option>IT Office</option>
+        <option>Admin Office</option>
+      </select>
+
+    </section>
+
+
+    <!-- Property Table -->
+    <section class="table-wrapper">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Property No.</th>
+            <th>Description</th>
+            <th>Qty</th>
+            <th>Unit</th>
+            <th>Location / Office</th>
+            <th>Accountable Person</th>
+            <th>Date Acquired</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <!-- Item 1 -->
+          <tr>
+
+            <td class="property-no">2025-01-0012</td>
+
+            <td>
+              <div class="description">
+                Steel filing cabinet, 4-drawer
+              </div>
+            </td>
+
+            <td class="center">2</td>
+            <td class="center">unit</td>
+
+            <td>Records Office</td>
+
+            <td>M. Santos</td>
+
+            <td>Jan 15, 2025</td>
+
+            <td>
+              <span class="status serviceable">
+                Serviceable
+              </span>
+            </td>
+
+            <td class="actions">
+              <button class="edit">Edit</button>
+              <button class="delete">Delete</button>
+            </td>
+
+          </tr>
+
+
+          <!-- Item 2 -->
+          <tr>
+
+            <td class="property-no">2024-11-0087</td>
+
+            <td>
+              <div class="description">
+                Desktop computer set
+              </div>
+
+              <div class="sub-description">
+                Unit 3 has display issue
+              </div>
+            </td>
+
+            <td class="center">5</td>
+            <td class="center">set</td>
+
+            <td>IT Office</td>
+
+            <td>R. Cruz</td>
+
+            <td>Nov 3, 2024</td>
+
+            <td>
+              <span class="status repair">
+                For Repair
+              </span>
+            </td>
+
+            <td class="actions">
+              <button class="edit">Edit</button>
+              <button class="delete">Delete</button>
+            </td>
+
+          </tr>
+
+
+          <!-- Item 3 -->
+          <tr>
+
+            <td class="property-no">2023-06-0044</td>
+
+            <td>
+              <div class="description">
+                Electric fan, stand type
+              </div>
+
+              <div class="sub-description">
+                Motor burned out
+              </div>
+            </td>
+
+            <td class="center">3</td>
+            <td class="center">pc</td>
+
+            <td>Admin Office</td>
+
+            <td>A. Reyes</td>
+
+            <td>Jun 20, 2023</td>
+
+            <td>
+              <span class="status unserviceable">
+                Unserviceable
+              </span>
+            </td>
+
+            <td class="actions">
+              <button class="edit">Edit</button>
+              <button class="delete">Delete</button>
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </section>
+
+  </main>
+
+</body>
+</html>
+```
+
+This is now **one standalone HTML file**. You no longer need `style.css`; just save it as something like **`property-ledger.html`** and open it in your browser.
+
+If you want, I can also add the **JavaScript functionality** so **Search, Status/Location filters, Add Item, Edit, Delete, and Export CSV** actually work.
